@@ -22,15 +22,11 @@ const Game = () => {
   const [player, setPlayer] = useState(PLAYER.ONE);
   const [moveData, setMoveData] = useState({ data: [], reverse: false });
   const [winner, setWinner] = useState(null);
-
   const resetGame = () => {
     setPlayer(PLAYER.ONE);
     setMoveData({ data: [], reverse: false });
     setWinner(null);
   };
-
-  React.useEffect(() => {}, [moveData.data]);
-  React.useEffect(() => {}, [winner]);
 
   const winCheck = (moveData, player) => {
     let validWin =
@@ -164,7 +160,7 @@ const Game = () => {
         reverse={() => {
           let newMoveData = [...moveData.data];
           setMoveData({
-            data: newMoveData.reverse(),
+            ...moveData,
             reverse: !moveData.reverse,
           });
         }}

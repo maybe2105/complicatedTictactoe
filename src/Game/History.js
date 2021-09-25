@@ -13,8 +13,13 @@ const SORT_MODE = {
   oldest: 1,
 };
 
-const History = ({ moveData, reverse, winner }) => {
+const History = ({ moveData, reverse }) => {
   const [sortMode, setSortMode] = useState(SORT_MODE.newest);
+  const [sortedMove, setSortedMove] = useState([]);
+
+  React.useEffect(() => {
+    setSortedMove([...moveData]);
+  }, [moveData]);
 
   return (
     <Box mt={2} ml={3}>
@@ -30,7 +35,8 @@ const History = ({ moveData, reverse, winner }) => {
             label="Sắp xếp"
             onChange={(e) => {
               setSortMode(e.target.value);
-              reverse();
+              let tempArr = [...sortedMove];
+              setSortedMove([...tempArr.reverse()]);
             }}
             style={{ marginLeft: 16 }}
           >
@@ -43,7 +49,7 @@ const History = ({ moveData, reverse, winner }) => {
           </Select>
         </FormControl>
       </Box>
-      {moveData.map((data, i) => {
+      {sortedMove.map((data, i) => {
         return (
           <Typography
             style={{
