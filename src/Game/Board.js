@@ -133,7 +133,7 @@ const Board = ({
         flexDirection: "column",
         alignItems: "center",
         margin: "32px 24px",
-        width: "30%",
+        width: "50%",
       }}
     >
       {board.map((row, rIndex) => {
