@@ -18,11 +18,12 @@ const PLAYER = {
   TWO: 2,
 };
 const BOARD = [
-  { value: 3, content: "3x3" },
   { value: 6, content: "6x6" },
   { value: 9, content: "9x9" },
   { value: 12, content: "12x12" },
   { value: 15, content: "15x15" },
+  { value: 18, content: "18x18" },
+  { value: 30, content: "30x30" },
 ];
 const Game = () => {
   const [player, setPlayer] = useState(PLAYER.ONE);
