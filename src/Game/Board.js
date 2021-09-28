@@ -25,13 +25,13 @@ const Board = ({
   );
   const winCheck = (data) => {
     let validWin =
-      data.player == PLAYER.ONE ? new RegExp("O{3}") : new RegExp("X{3}");
+      data.player == PLAYER.ONE ? new RegExp("O{5}") : new RegExp("X{5}");
 
     let rDiag = { string: "", path: [] };
     let lDiag = { string: "", path: [] };
     let column = { string: "", path: [] };
     let row = { string: "", path: [] };
-    for (let i = -2; i <= 2; i++) {
+    for (let i = -5; i <= 5; i++) {
       if (board[data.r + i]?.[data.c + i] == data.sign) {
         rDiag = {
           string: rDiag.string.concat(data.sign),
@@ -49,7 +49,7 @@ const Board = ({
         };
       }
     }
-    for (let i = -2; i <= 2; i++) {
+    for (let i = -5; i <= 5; i++) {
       if (board[data.r + i]?.[data.c - i] == data.sign) {
         lDiag = {
           string: lDiag.string.concat(data.sign),
@@ -67,7 +67,7 @@ const Board = ({
         };
       }
     }
-    for (let i = -2; i <= 2; i++) {
+    for (let i = -5; i <= 5; i++) {
       if (board[data.r + i]?.[data.c] == data.sign) {
         row = {
           string: row.string.concat(data.sign),
@@ -85,7 +85,7 @@ const Board = ({
         };
       }
     }
-    for (let i = -2; i <= 2; i++) {
+    for (let i = -5; i <= 5; i++) {
       if (board[data.r]?.[data.c + i] == data.sign) {
         column = {
           string: column.string.concat(data.sign),
