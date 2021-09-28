@@ -13,13 +13,21 @@ const SORT_MODE = {
   oldest: 1,
 };
 
-const History = ({ moveData, reverse }) => {
+const History = ({ moveData, reset, reverse, reverseData }) => {
   const [sortMode, setSortMode] = useState(SORT_MODE.newest);
   const [sortedMove, setSortedMove] = useState([]);
 
   React.useEffect(() => {
-    setSortedMove([...moveData]);
+    if (!reverse) {
+      setSortedMove([...moveData]);
+    } else {
+      setSortedMove([...moveData].reverse());
+    }
   }, [moveData]);
+
+  React.useEffect(() => {
+    setSortMode(SORT_MODE.newest);
+  }, [reset]);
 
   return (
     <Box mt={2} ml={3}>
@@ -37,6 +45,7 @@ const History = ({ moveData, reverse }) => {
               setSortMode(e.target.value);
               let tempArr = [...sortedMove];
               setSortedMove([...tempArr.reverse()]);
+              reverseData();
             }}
             style={{ marginLeft: 16 }}
           >

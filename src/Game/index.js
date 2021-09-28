@@ -22,8 +22,10 @@ const Game = () => {
   const [player, setPlayer] = useState(PLAYER.ONE);
   const [moveData, setMoveData] = useState({ data: [], reverse: false });
   const [winner, setWinner] = useState(null);
+  const [reset, setReset] = useState(false);
   const resetGame = () => {
     setPlayer(PLAYER.ONE);
+    setReset((prev) => !prev);
     setMoveData({ data: [], reverse: false });
     setWinner(null);
   };
@@ -119,33 +121,19 @@ const Game = () => {
               ],
               player
             );
-            if (moveData.reverse) {
-              setMoveData({
-                ...moveData,
-                data: [
-                  ...moveData.data,
-                  {
-                    r: rIndex,
-                    c: cIndex,
-                    sign: player == PLAYER.ONE ? "O" : "X",
-                    player,
-                  },
-                ],
-              });
-            } else {
-              setMoveData({
-                ...moveData,
-                data: [
-                  {
-                    r: rIndex,
-                    c: cIndex,
-                    sign: player == PLAYER.ONE ? "O" : "X",
-                    player,
-                  },
-                  ...moveData.data,
-                ],
-              });
-            }
+
+            setMoveData({
+              ...moveData,
+              data: [
+                {
+                  r: rIndex,
+                  c: cIndex,
+                  sign: player == PLAYER.ONE ? "O" : "X",
+                  player,
+                },
+                ...moveData.data,
+              ],
+            });
             setPlayer((player) =>
               player == PLAYER.ONE ? PLAYER.TWO : PLAYER.ONE
             );
@@ -157,12 +145,15 @@ const Game = () => {
       />
       <History
         moveData={moveData.data}
-        reverse={() => {
-          let newMoveData = [...moveData.data];
-          setMoveData({
-            ...moveData,
-            reverse: !moveData.reverse,
-          });
+        reverse={moveData.reverse}
+        reset={reset}
+        reverseData={() => {
+          const newData = { ...moveData, reverse: !moveData.reverse };
+          setMoveData(newData);
+          console.log(
+            "🚀 ~ file: index.js ~ line 152 ~ Game ~ newData",
+            newData
+          );
         }}
       />
       {(winner || moveData.data.length == size * size) && (
