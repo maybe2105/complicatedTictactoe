@@ -23,11 +23,11 @@ const History = ({ moveData, reset, reverse, reverseData }) => {
     } else {
       setSortedMove([...moveData].reverse());
     }
-  }, [moveData]);
 
-  React.useEffect(() => {
-    setSortMode(SORT_MODE.newest);
-  }, [reset]);
+    if (moveData.lenght == 0) {
+      setSortMode(SORT_MODE.newest);
+    }
+  }, [moveData]);
 
   return (
     <Box mt={2} ml={3}>

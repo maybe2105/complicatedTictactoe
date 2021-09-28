@@ -17,79 +17,22 @@ const PLAYER = {
   ONE: 1,
   TWO: 2,
 };
-const size = 3;
+const BOARD = [
+  { value: 3, content: "3x3" },
+  { value: 6, content: "6x6" },
+  { value: 9, content: "9x9" },
+  { value: 12, content: "12x12" },
+  { value: 15, content: "15x15" },
+];
 const Game = () => {
   const [player, setPlayer] = useState(PLAYER.ONE);
   const [moveData, setMoveData] = useState({ data: [], reverse: false });
   const [winner, setWinner] = useState(null);
-  const [reset, setReset] = useState(false);
+  const [size, setSize] = useState(null);
   const resetGame = () => {
     setPlayer(PLAYER.ONE);
-    setReset((prev) => !prev);
     setMoveData({ data: [], reverse: false });
     setWinner(null);
-  };
-
-  const winCheck = (moveData, player) => {
-    let validWin =
-      player == PLAYER.ONE ? new RegExp("^O{3}") : new RegExp("^X{3}");
-
-    for (let i = 0; i < size; i++) {
-      let column = { string: "", path: [] };
-      let row = { string: "", path: [] };
-      let rDiagnol = { string: "", path: [] };
-      let lDiagnol = { string: "", path: [] };
-      let mapData = [...moveData].map((data, index) => {
-        const checkSign = player == PLAYER.ONE ? "O" : "X";
-        if (data.sign == checkSign) {
-          if (data.c == i) {
-            column = {
-              string: column.string?.concat(data.sign),
-              path: [...column.path, index],
-            };
-          }
-          if (data.r == i) {
-            row = {
-              string: row.string?.concat(data.sign),
-              path: [...row.path, index],
-            };
-          }
-          if (data.r == data.c) {
-            rDiagnol = {
-              string: rDiagnol.string?.concat(data.sign),
-              path: [...rDiagnol.path, index],
-            };
-          }
-          if (
-            (data.r == size - 1 && data.c == 0) ||
-            (data.c == size - 1 && data.r == 0) ||
-            (data.r == 1 && data.c == 1)
-          ) {
-            lDiagnol = {
-              string: lDiagnol.string?.concat(data.sign),
-              path: [...lDiagnol.path, index],
-            };
-          }
-        }
-      });
-
-      if (validWin.test(column.string)) {
-        setWinner({ player: player, path: column.path });
-        return;
-      }
-      if (validWin.test(row.string)) {
-        setWinner({ player: player, path: row.path });
-        return;
-      }
-      if (validWin.test(rDiagnol.string)) {
-        setWinner({ player: player, path: rDiagnol.path });
-        return;
-      }
-      if (validWin.test(lDiagnol.string)) {
-        setWinner({ player: player, path: lDiagnol.path });
-        return;
-      }
-    }
   };
 
   return (
@@ -100,94 +43,126 @@ const Game = () => {
         height: "100vh",
       }}
     >
-      <Board
-        resetGame={resetGame}
-        userMove={(rIndex, cIndex) => {
-          if (
-            !moveData.data.find(
-              (data) => data.r == rIndex && data.c == cIndex
-            ) &&
-            !winner
-          ) {
-            winCheck(
-              [
-                {
-                  r: rIndex,
-                  c: cIndex,
-                  sign: player == PLAYER.ONE ? "O" : "X",
-                  player,
-                },
-                ...moveData.data,
-              ],
-              player
-            );
-
-            setMoveData({
-              ...moveData,
-              data: [
-                {
-                  r: rIndex,
-                  c: cIndex,
-                  sign: player == PLAYER.ONE ? "O" : "X",
-                  player,
-                },
-                ...moveData.data,
-              ],
-            });
-            setPlayer((player) =>
-              player == PLAYER.ONE ? PLAYER.TWO : PLAYER.ONE
-            );
-          }
-        }}
-        moveData={moveData.data}
-        player={player}
-        winner={winner}
-      />
-      <History
-        moveData={moveData.data}
-        reverse={moveData.reverse}
-        reset={reset}
-        reverseData={() => {
-          const newData = { ...moveData, reverse: !moveData.reverse };
-          setMoveData(newData);
-          console.log(
-            "🚀 ~ file: index.js ~ line 152 ~ Game ~ newData",
-            newData
-          );
-        }}
-      />
-      {(winner || moveData.data.length == size * size) && (
+      {size ? (
+        <>
+          <Board
+            setWinner={(data) => {
+              console.log("here");
+              setWinner({ player: data.player, path: data.path });
+            }}
+            size={size}
+            resetGame={resetGame}
+            userMove={(rIndex, cIndex) => {
+              setPlayer((player) =>
+                player == PLAYER.ONE ? PLAYER.TWO : PLAYER.ONE
+              );
+              if (
+                !moveData.data.find(
+                  (data) => data.r == rIndex && data.c == cIndex
+                ) &&
+                !winner
+              ) {
+                setMoveData({
+                  ...moveData,
+                  data: [
+                    {
+                      r: rIndex,
+                      c: cIndex,
+                      sign: player == PLAYER.ONE ? "O" : "X",
+                      player,
+                    },
+                    ...moveData.data,
+                  ],
+                });
+              }
+            }}
+            moveData={moveData.data}
+            player={player}
+            winner={winner}
+          />
+          <History
+            moveData={moveData.data}
+            reverse={moveData.reverse}
+            reverseData={() => {
+              const newData = { ...moveData, reverse: !moveData.reverse };
+              setMoveData(newData);
+            }}
+          />
+          {(winner || moveData.data.length == size * size) && (
+            <Box
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginLeft: 32,
+                height: "100%",
+                flex: 1,
+                alignItems: "center",
+              }}
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  marginTop: 32,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {winner ? (
+                  <Typography>
+                    <Typography component="span" style={{ fontWeight: 600 }}>
+                      {`Người chơi ${winner.player}`}
+                    </Typography>
+                    &nbsp;đã dành chiến thắng
+                  </Typography>
+                ) : (
+                  <Typography>
+                    Không người chơi nào chiến thắng, kết quả hoà
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          )}
+        </>
+      ) : (
         <Box
           style={{
+            width: "100vh",
             display: "flex",
-            flexDirection: "column",
-            marginLeft: 32,
-            height: "100%",
-            flex: 1,
+            justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Box
+          <Typography style={{ fontWeight: 600, marginRight: 16 }}>
+            Hãy chọn kích cỡ bàn chơi
+          </Typography>
+          <FormControl
             style={{
+              flex: 1,
+              maxWidth: 200,
               display: "flex",
-              marginTop: 32,
-              justifyContent: "center",
-              alignItems: "center",
+              placeContent: "center center",
             }}
           >
-            {winner ? (
-              <Typography>
-                <Typography component="span" style={{ fontWeight: 600 }}>
-                  {`Người chơi ${winner.player}`}
-                </Typography>
-                &nbsp;đã dành chiến thắng
-              </Typography>
-            ) : (
-              <Typography>
-                Không người chơi nào chiến thắng, kết quả hoà
-              </Typography>
-            )}
-          </Box>
+            <InputLabel id="sizeLabel" style={{ height: "100%" }}>
+              Chọn kích cỡ
+            </InputLabel>
+            <Select
+              value={size}
+              labelId="sizeLabel"
+              size="small"
+              id="size"
+              label="size"
+              onChange={(e) => setSize(e.target.value)}
+            >
+              {BOARD.map((data) => {
+                return (
+                  <MenuItem key={data.value} value={data.value}>
+                    {data.content}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
         </Box>
       )}
     </div>
